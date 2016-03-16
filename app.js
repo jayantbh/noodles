@@ -36,7 +36,7 @@ app.post("/scrape", function (req, res) {
 				var responseHTML = "";
 
 				selectors.forEach(function (select, i) {
-					responseHTML += $(select).append($('#xxx').clone()).html();
+					responseHTML += $(select).html() + "<br>";
 				});
 
 				res.send(responseHTML);
@@ -45,4 +45,4 @@ app.post("/scrape", function (req, res) {
 	}
 });
 
-app.listen("9000");
+app.listen("9001");
