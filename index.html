@@ -1,59 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Noodles</title>
+	<meta charset="UTF-8">
+	<title>Noodles</title>
 	<style>
-		.hide{
+		.hide {
 			display: none;
 		}
-		.red-text{
+
+		.red-text {
 			color: red;
 		}
-		button{
+
+		button {
 			display: block;
 		}
 	</style>
 	<script>
 
-		function scrape(){
+		function scrape() {
+			document.getElementById("json").innerText = "";
+
 			var urlEl = document.getElementById("url");
 			var typeEl = document.getElementById("type");
 			var selectEl = document.getElementById("selectors");
+			var paramEl = document.getElementById("params");
+			var headEl = document.getElementById("heads");
 
 			var url = urlEl.value;
 			var type = typeEl.value;
 			var selectors = selectEl.value;
+			var params = paramEl.value;
+			var headers = headEl.value;
 
 			var err = false;
 
-			if(urlEl.validity.valid && url.length){
+			if (urlEl.validity.valid && url.length) {
 				document.getElementById("urlerr").classList.add("hide");
 			}
-			else{
+			else {
 				document.getElementById("urlerr").classList.remove("hide");
 				err = true;
 			}
-			if(typeEl.validity.valid && type.length){
+			if (typeEl.validity.valid && type.length) {
 				document.getElementById("typerr").classList.add("hide");
 			}
-			else{
+			else {
 				document.getElementById("typerr").classList.remove("hide");
 				err = true;
 			}
-			if(selectEl.validity.valid && selectors.length){
+			if (selectEl.validity.valid) {
 				document.getElementById("selerr").classList.add("hide");
 			}
-			else{
+			else {
 				document.getElementById("selerr").classList.remove("hide");
 				err = true;
 			}
 
-			if(!err){
+			if (!err) {
 				var scrapeJSON = {
 					url: url,
 					type: type,
-					selectors: selectors
+					selectors: selectors,
+					params: params,
+					heads: headers
 				};
 
 				var request = new XMLHttpRequest();
@@ -61,9 +71,9 @@
 				request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 				request.send(JSON.stringify(scrapeJSON));
 
-				request.onreadystatechange = function() {
+				request.onreadystatechange = function () {
 					if (request.readyState == 4 && request.status == 200) {
-						document.getElementById("json").innerText = request.responseText;
+						document.getElementById("json").innerHTML = request.responseText;
 					}
 				};
 			}
@@ -71,15 +81,30 @@
 	</script>
 </head>
 <body>
-	<h1>Noodles | Basic Web Scraper</h1>
-	<h2>Enter URL <small id="urlerr" class="red-text hide">Invalid URL</small></h2>
-	<input type="text" id="url"/>
-	<h2>Enter Request Type (get/post) <small id="typerr" class="red-text hide">Invalid TYPE</small></h2>
-	<input type="text" id="type"/>
-	<h2>Enter newline separated selectors: <small id="selerr" class="red-text hide">Invalid Selectors</small></h2>
-	<textarea name="selectors" id="selectors" cols="30" rows="10"></textarea>
-	<button onclick="scrape()">SCRAPE!</button>
-	<hr/>
-	<div id="json"></div>
+<h1>Noodles | Basic Web Scraper</h1>
+
+<h2>Enter URL
+	<small id="urlerr" class="red-text hide">Invalid URL</small>
+</h2>
+<input type="text" id="url" value="http://wbutech.net/show-result1516.php"/>
+
+<h2>Enter Request Type (get/post)
+	<small id="typerr" class="red-text hide">Invalid TYPE</small>
+</h2>
+<input type="text" id="type" value="post"/>
+
+<h2>Enter Parameters</h2>
+<input type="text" id="params" placeholder="key1=val1&key2&val2&key3=val3..." value="semno=5&rectype=1&rollno=30000113017"/>
+
+<h2>Enter Headers</h2>
+<textarea type="text" id="heads" cols="30" rows="10" placeholder="MUST BE JSON">{"Referer":"http://wbutech.net/result_odd1516.php"}</textarea>
+
+<h2>Enter newline separated selectors:
+	<small id="selerr" class="red-text hide">Invalid Selectors</small>
+</h2>
+<textarea name="selectors" id="selectors" cols="30" rows="10"></textarea>
+<button onclick="scrape()">SCRAPE!</button>
+<hr/>
+<div id="json"></div>
 </body>
 </html>
