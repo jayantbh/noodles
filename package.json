@@ -1,0 +1,32 @@
+{
+  "name": "noodles",
+  "version": "1.0.0",
+  "description": "A customizable node.js web scraper.",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://jayantbh@bitbucket.org/jayantbh/noodles.git"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "cheerio": "latest",
+    "express": "latest",
+    "request": "latest"
+  },
+  "keywords": [
+    "web",
+    "scraper",
+    "noodles",
+    "nodejs",
+    "express",
+    "cheerio",
+    "request"
+  ],
+  "author": "Jayant Bhawal",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/jayantbh/noodles#readme"
+}

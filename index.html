@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Noodles</title>
+	<style>
+		.hide{
+			display: none;
+		}
+		.red-text{
+			color: red;
+		}
+		button{
+			display: block;
+		}
+	</style>
+	<script>
+
+		function scrape(){
+			var urlEl = document.getElementById("url");
+			var typeEl = document.getElementById("type");
+			var selectEl = document.getElementById("selectors");
+
+			var url = urlEl.value;
+			var type = typeEl.value;
+			var selectors = selectEl.value;
+
+			var err = false;
+
+			if(urlEl.validity.valid && url.length){
+				document.getElementById("urlerr").classList.add("hide");
+			}
+			else{
+				document.getElementById("urlerr").classList.remove("hide");
+				err = true;
+			}
+			if(typeEl.validity.valid && type.length){
+				document.getElementById("typerr").classList.add("hide");
+			}
+			else{
+				document.getElementById("typerr").classList.remove("hide");
+				err = true;
+			}
+			if(selectEl.validity.valid && selectors.length){
+				document.getElementById("selerr").classList.add("hide");
+			}
+			else{
+				document.getElementById("selerr").classList.remove("hide");
+				err = true;
+			}
+
+			if(!err){
+				var scrapeJSON = {
+					url: url,
+					type: type,
+					selectors: selectors
+				};
+
+				var request = new XMLHttpRequest();
+				request.open('POST', '/scrape', true);
+				request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+				request.send(JSON.stringify(scrapeJSON));
+
+				request.onreadystatechange = function() {
+					if (request.readyState == 4 && request.status == 200) {
+						document.getElementById("json").innerText = request.responseText;
+					}
+				};
+			}
+		}
+	</script>
+</head>
+<body>
+	<h1>Noodles | Basic Web Scraper</h1>
+	<h2>Enter URL <small id="urlerr" class="red-text hide">Invalid URL</small></h2>
+	<input type="text" id="url"/>
+	<h2>Enter Request Type (get/post) <small id="typerr" class="red-text hide">Invalid TYPE</small></h2>
+	<input type="text" id="type"/>
+	<h2>Enter newline separated selectors: <small id="selerr" class="red-text hide">Invalid Selectors</small></h2>
+	<textarea name="selectors" id="selectors" cols="30" rows="10"></textarea>
+	<button onclick="scrape()">SCRAPE!</button>
+	<hr/>
+	<div id="json"></div>
+</body>
+</html>
