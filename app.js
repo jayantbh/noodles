@@ -44,7 +44,7 @@ app.post("/scrape", function (req, res) {
 		});
 	}
 });
-var port = process.argv[2] || "9000";
+var port = process.env.PORT || "9000";
 app.listen(port,"0.0.0.0", function(){
     console.log("Server running on port "+port);
 });
