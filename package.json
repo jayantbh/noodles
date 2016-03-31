@@ -4,7 +4,7 @@
 	"description": "A customizable node.js web scraper.",
 	"main": "app.js",
 	"scripts": {
-		"start": "nodemon app.js",
+		"start": "node app.js",
 		"test": "npm start"
 	},
 	"repository": {
