@@ -1,5 +1,6 @@
 # noodles
-A customizable node.js web scraper.
+A customizable node.js web scraper.  
+Demo on http://noodlesscraper.herokuapp.com/
 
 ###How to use
 
