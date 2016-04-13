@@ -3,7 +3,74 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Noodles</title>
+	<link rel="stylesheet" href="reset.css"/>
 	<style>
+		* {
+			font-family: sans-serif;
+			color: #274C77;
+		}
+
+		body {
+			background: #E7ECEF;
+			display: flex;
+			align-items: center;
+			flex-direction: column;
+		}
+		nav{
+			padding: 2rem;
+		}
+		[title]{
+			cursor: pointer;
+			height: 1em;
+			width: 1em;
+			font-size: 1em;
+			padding: 0.125rem;
+			margin: 0.25em;
+			vertical-align: middle;
+			display: inline-block;
+			font-weight: bold;
+			text-align: center;
+			border-radius: 50%;
+			background: #274C77;
+			color: #E7ECEF;
+			font-style: italic;
+		}
+
+		.container {
+			display: flex;
+			flex-direction: column;
+			width: 70%;
+		}
+
+		.container > * {
+			margin-bottom: 0.5rem;
+		}
+
+		.flex {
+			display: flex;
+		}
+
+		.ns {
+			flex-shrink: 0;
+		}
+		.presets button{
+			margin: 0.25rem;
+		}
+
+		.iterator {
+			/*justify-content: center;*/
+			align-items: center;
+		}
+
+		.iterator input {
+			height: 1rem;
+			width: 3rem;
+		}
+
+		.iterator label {
+			padding: 0.5rem;
+		}
+
 		.hide {
 			display: none;
 		}
@@ -14,158 +81,94 @@
 
 		button {
 			display: block;
+			background: #6096BA;
+			color: #E7ECEF;
+			border: 0;
+			border-radius: 0.125rem;
+			box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+			padding: 0.5rem;
+			cursor: pointer;
+		}
+
+		textarea, input {
+			background: #A3CEF1;
+			border: 0;
+			border-radius: 0.125rem;
+			box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2) inset;
+			padding: 0.5rem;
+		}
+
+		h1, h2, h3, h4 {
+			font-weight: lighter;
+		}
+
+		table{
+			border: 2px solid;
+			width: 100%;
+		}
+		table tr td{
+			padding: 0.25rem;
+			border: 1px solid;
+		}
+		.wrapper{
+			max-height: 600px;
+			overflow-y: auto;
+			width: 100%;
 		}
 	</style>
-	<script>
-
-		function scrape() {
-			if(clr){
-				clearInterval(clr);
-			}
-			var clr;
-			document.getElementById("output").innerHTML = "";
-
-			var urlEl = document.getElementById("url");
-			var typeEl = document.getElementById("type");
-			var selectEl = document.getElementById("selectors");
-			var paramEl = document.getElementById("params");
-			var headEl = document.getElementById("heads");
-
-			var url = urlEl.value;
-			var type = typeEl.value;
-			var selectors = selectEl.value;
-			var params = paramEl.value;
-			var headers = headEl.value;
-
-			var err = false;
-
-			if (urlEl.validity.valid && url.length) {
-				document.getElementById("urlerr").classList.add("hide");
-			}
-			else {
-				document.getElementById("urlerr").classList.remove("hide");
-				err = true;
-			}
-			if (typeEl.validity.valid && type.length) {
-				document.getElementById("typerr").classList.add("hide");
-			}
-			else {
-				document.getElementById("typerr").classList.remove("hide");
-				err = true;
-			}
-			if (selectEl.validity.valid) {
-				document.getElementById("selerr").classList.add("hide");
-			}
-			else {
-				document.getElementById("selerr").classList.remove("hide");
-				err = true;
-			}
-
-			if (!err) {
-				var scrapeJSON = {
-					url: url,
-					type: type,
-					selectors: selectors,
-					params: params,
-					heads: headers
-				};
-
-				function callScraper() {
-					var request = new XMLHttpRequest();
-					request.open('POST', '/scrape', true);
-					request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-					request.send(JSON.stringify(scrapeJSON));
-
-					request.onreadystatechange = function () {
-						if (request.readyState == 4 && request.status == 200) {
-						    var scrapeData = JSON.parse(request.responseText).map(function(el,i){return(el.replace(/\n|\t/g,""))});
-
-						    var row = document.createElement("tr");
-						    scrapeData.forEach(function(v,i){
-						        if(v){
-    						        var col = document.createElement("td");
-        							col.innerHTML = v;
-        							row.appendChild(col);
-						        }
-						    });
-						    if(row.hasChildNodes){
-    						  document.getElementById("output").appendChild(row);
-						    }
-						}
-					};
-				}
-
-				var iter = params.match(/\{(.+)\}/)
-				if (iter && iter[1]) {
-					var l = iter[1].length;
-					var min = document.getElementById("min").value;
-					var max = document.getElementById("max").value;
-					var delay = document.getElementById("delay").value;
-
-					clr = setInterval(function () {
-						var replacement = "";
-						if (min.toString().length < l) {
-							var diff = l - min.toString().length;
-							while (diff--) {
-								replacement += "0";
-							}
-							replacement += min;
-						}
-						else {
-							replacement += min;
-						}
-						scrapeJSON.params = params.replace(iter[0], replacement);
-
-						callScraper();
-						if (min > max) {
-							clearInterval(clr);
-						}
-						min++;
-
-					}, delay);
-				}
-				else {
-					callScraper();
-				}
-			}
-		}
-	</script>
+	<script src="script.js"></script>
 </head>
 <body>
-<h1>Noodles | Basic Web Scraper</h1>
 
-<h2>Enter URL
-	<small id="urlerr" class="red-text hide">Invalid URL</small>
-</h2>
-<input type="text" id="url" value="http://wbutech.net/show-result1516.php"/>
+<nav>
+	<h1>Noodles | Basic Web Scraper</h1>
+</nav>
+<div class="container">
+	<div>
+		<h3>Use Presets</h3>
+	</div>
+	<div class="flex presets">
+		<button onclick="applyPreset('wbut')">WBUT</button><button onclick="applyPreset('cbse')">CBSE XII 2015</button>
+	</div>
 
-<h2>Enter Request Type (get/post)
-	<small id="typerr" class="red-text hide">Invalid TYPE</small>
-</h2>
-<input type="text" id="type" value="post"/>
+	<h2>Enter URL
+		<small id="urlerr" class="red-text hide">Invalid URL</small>
+	</h2>
+	<input type="text" id="url" value=""/>
 
-<h2>Enter Parameters (Only ONE for now, enclose iterators in {})</h2>
-<input type="text" id="params" placeholder="key1=val1&key2&val2&key3=val3..."
-	   value="semno=5&rectype=1&rollno=300001130{##}"/>
-<h4>Iterator range</h4>
-<label for="min">Min</label>
-<input id="min" type="number" value="1"/>
-<label for="max">Max</label>
-<input id="max" type="number" value="33"/>
-<br/>
-<label for="delay">Delay between iterative scraper hits</label>
-<input id="delay" type="number" value="1000"/>
+	<h2>Enter Request Type <span title="Only post supported for now, because I'm a lazy ass sometimes.">i</span>
+		<small id="typerr" class="red-text hide">Invalid TYPE</small>
+	</h2>
+	<input type="text" id="type" value=""/>
 
-<h2>Enter Headers</h2>
-<textarea type="text" id="heads" cols="30" rows="10" placeholder="MUST BE JSON">{"Referer":"http://wbutech.net/result_odd1516.php"}</textarea>
+	<h2>Enter Parameters <span title="Only one iterator supported, multiple iterators won't work.">i</span></h2>
+	<input type="text" id="params" placeholder="key1=val1&key2&val2&key3=val3..."
+		   value=""/>
 
-<h2>Enter newline separated selectors:
-	<small id="selerr" class="red-text hide">Invalid Selectors</small>
-</h2>
-<textarea name="selectors" id="selectors" cols="30" rows="10">#lblContent > table:nth-child(2) > tbody > tr:nth-child(2) > th:nth-child(1)
-#lblContent > table:nth-child(8) > tbody > tr:nth-child(1) > td</textarea>
-<button onclick="scrape()">SCRAPE!</button>
-<hr/>
-<table border=2 cellpadding=5 id="output"></table>
+	<h4>Iterator range</h4>
+
+	<div class="flex iterator">
+		<label for="min">Min</label>
+		<input id="min" min="0" type="number" value="0"/>
+		<label for="max">Max</label>
+		<input id="max" min="0" type="number" value="0"/>
+		<br/>
+		<label for="delay" class="ns">Delay between hits<span title="Too small delay value might end up blacklisting server IP for the given domain.">i</span></label>
+		<input id="delay" type="number" value="500"/>
+	</div>
+
+	<h2>Enter Headers <span title="Data must be in JSON format.">i</span></h2>
+	<textarea type="text" id="heads" cols="30" rows="10" placeholder="MUST BE JSON"></textarea>
+
+	<h2>Enter newline separated selectors: <span title="Each selector data appears in a different column.">i</span>
+		<small id="selerr" class="red-text hide">Invalid Selectors</small>
+	</h2>
+	<textarea name="selectors" id="selectors" cols="30" rows="10"></textarea>
+	<button id="go-scrape" onclick="scrape()">SCRAPE!</button>
+	<hr/>
+</div>
+<div class="wrapper">
+	<table id="output"></table>
+</div>
 </body>
 </html>
