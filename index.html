@@ -19,6 +19,10 @@
 	<script>
 
 		function scrape() {
+			if(clr){
+				clearInterval(clr);
+			}
+			var clr;
 			document.getElementById("json").innerText = "";
 
 			var urlEl = document.getElementById("url");
@@ -86,7 +90,7 @@
 					var max = document.getElementById("max").value;
 					var delay = document.getElementById("delay").value;
 
-					var clr = setInterval(function () {
+					clr = setInterval(function () {
 						var replacement = "";
 						if (min.toString().length < l) {
 							var diff = l - min.toString().length;
@@ -128,7 +132,7 @@
 </h2>
 <input type="text" id="type" value="post"/>
 
-<h2>Enter Parameters (enclose iterators in {})</h2>
+<h2>Enter Parameters (Only ONE for now, enclose iterators in {})</h2>
 <input type="text" id="params" placeholder="key1=val1&key2&val2&key3=val3..."
 	   value="semno=5&rectype=1&rollno=300001130{##}"/>
 <h4>Iterator range</h4>
