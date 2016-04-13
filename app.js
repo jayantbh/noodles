@@ -33,16 +33,18 @@ app.post("/scrape", function (req, res) {
 			else{
 				var $ = cheerio.load(body);
 
-				var responseHTML = "";
+				var responseArray = [];
 
 				selectors.forEach(function (select, i) {
-					responseHTML += $(select).html() + "<br>";
+					responseArray.push($(select).text());
 				});
 
-				res.send(responseHTML);
+				res.send(responseArray);
 			}
-		})
+		});
 	}
 });
-
-app.listen("9001");
+var port = process.argv[2] || "9000";
+app.listen(port,"0.0.0.0", function(){
+    console.log("Server running on port "+port);
+});

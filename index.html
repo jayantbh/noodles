@@ -23,7 +23,7 @@
 				clearInterval(clr);
 			}
 			var clr;
-			document.getElementById("json").innerText = "";
+			document.getElementById("output").innerHTML = "";
 
 			var urlEl = document.getElementById("url");
 			var typeEl = document.getElementById("type");
@@ -78,7 +78,19 @@
 
 					request.onreadystatechange = function () {
 						if (request.readyState == 4 && request.status == 200) {
-							document.getElementById("json").innerHTML += request.responseText;
+						    var scrapeData = JSON.parse(request.responseText).map(function(el,i){return(el.replace(/\n|\t/g,""))});
+
+						    var row = document.createElement("tr");
+						    scrapeData.forEach(function(v,i){
+						        if(v){
+    						        var col = document.createElement("td");
+        							col.innerHTML = v;
+        							row.appendChild(col);
+						        }
+						    });
+						    if(row.hasChildNodes){
+    						  document.getElementById("output").appendChild(row);
+						    }
 						}
 					};
 				}
@@ -154,6 +166,6 @@
 #lblContent > table:nth-child(8) > tbody > tr:nth-child(1) > td</textarea>
 <button onclick="scrape()">SCRAPE!</button>
 <hr/>
-<div id="json"></div>
+<table border=2 cellpadding=5 id="output"></table>
 </body>
 </html>
