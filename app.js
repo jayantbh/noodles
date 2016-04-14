@@ -5,6 +5,7 @@ var express = require('express');
 var request = require('request');
 var cheerio = require('cheerio');
 var bodyParser = require("body-parser");
+var fs = require('fs');
 var app = express();
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -21,6 +22,7 @@ app.post("/scrape", function (req, res) {
 	var params = data.params;
 	var heads = JSON.parse(data.heads);
 	heads["User-Agent"] = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36";
+
 	if (type == "post") {
 		request.post({
 			url: url,
@@ -36,10 +38,14 @@ app.post("/scrape", function (req, res) {
 				var responseArray = [];
 
 				selectors.forEach(function (select, i) {
-					responseArray.push($(select).text());
+					responseArray.push($(select).text().trim());
 				});
 
 				res.send(responseArray);
+
+				if(data.writeToFile){
+					fs.appendFileSync('scraped/'+data.filename+'.csv',responseArray.filter(i => i.length).join(',')+"\n");
+				}
 			}
 		});
 	}

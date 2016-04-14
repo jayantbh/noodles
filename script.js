@@ -54,6 +54,7 @@ function scrape() {
 		var min = localStorage["min"] = document.getElementById("min").value;
 		var max = localStorage["max"] = document.getElementById("max").value;
 		var delay = localStorage["delay"] = document.getElementById("delay").value;
+		var saveToFile = document.querySelector("#file-save").checked;	//Not persisted to localStorage
 
 		var total = (max-min+1);
 
@@ -93,8 +94,15 @@ function scrape() {
 				type: type,
 				selectors: selectors,
 				params: params,
-				heads: headers
+				heads: headers,
+				writeToFile: saveToFile,
+				filename: new Date().getTime()
 			};
+
+			if(saveToFile){
+				document.getElementById("file-download").innerText = "Download File";
+				document.getElementById("file-download").href = "./scraped/"+scrapeJSON.filename+".csv";
+			}
 
 			var count = 0;
 			function callScraper() {
@@ -105,35 +113,37 @@ function scrape() {
 
 				request.onreadystatechange = function () {
 					if (request.readyState == 4 && request.status == 200) {
-						var scrapeData = JSON.parse(request.responseText).map(function(el,i){return(el.replace(/\n|\t/g,""))});
+						if(!saveToFile){
+							var scrapeData = JSON.parse(request.responseText).map(function(el,i){return(el.replace(/\n|\t/g,""))});
 
-						var row = document.createElement("tr");
-						scrapeData.forEach(function(v,i){
-							if(v){
-								var col = document.createElement("td");
-								col.innerHTML = v;
-								row.appendChild(col);
-							}
-						});
-						if(row.hasChildNodes){
-							document.getElementById("output").appendChild(row);
-							count++;
-							if(count == total){
-								document.getElementById("go-scrape").innerText = "Scraping Complete. "+count+" items scraped.";
-
-								if(window.Notification && Notification.permission !== "denied") {
-									var n = new Notification('Noodles!', {
-										body: 'Task for scraping '+count+' items is complete.',
-										icon: 'logo.png' // optional
-									});
+							var row = document.createElement("tr");
+							scrapeData.forEach(function(v,i){
+								if(v){
+									var col = document.createElement("td");
+									col.innerHTML = v;
+									row.appendChild(col);
 								}
+							});
+							if(row.hasChildNodes){
+								document.getElementById("output").appendChild(row);
 							}
-							else{
-								document.getElementById("go-scrape").innerText = "STOP SCRAPING! ("+count+"/"+total+" done)";
+						}
+						count++;
+						if(count == total){
+							document.getElementById("go-scrape").innerText = "Scraping Complete. "+count+" items scraped.";
+
+							if(window.Notification && Notification.permission !== "denied") {
+								var n = new Notification('Noodles!', {
+									body: 'Task for scraping '+count+' items is complete.',
+									icon: 'logo.png' // optional
+								});
 							}
-							if(isAtBottom()){
-								goToBottom();
-							}
+						}
+						else{
+							document.getElementById("go-scrape").innerText = "STOP SCRAPING! ("+count+"/"+total+" done)";
+						}
+						if(isAtBottom()){
+							goToBottom();
 						}
 					}
 				};
