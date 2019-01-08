@@ -2,7 +2,7 @@
 A customizable node.js web scraper.  
 Demo on http://noodlesscraper.herokuapp.com/
 
-###How to use
+### How to use
 
  - Add the target URL.
  - Add any request parameters (Only POST supported for now ^).
